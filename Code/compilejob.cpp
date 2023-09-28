@@ -12,7 +12,8 @@ void CompileJob::Execute()
     command.append(" 2>&1");
 
     // Open pile and run command
-    FILE *pipe = popen(command.c_str(), "r");
+    FILE *pipe = _popen(command.c_str(), "r");
+
     if (!pipe)
     {
         std::cout << "popen Failed: Failed to open pipe" << std::endl;
@@ -26,9 +27,9 @@ void CompileJob::Execute()
     }
 
     // Close pipe and get the return code
-    this->returnCode = pclose(pipe);
+    this->returnCode = _pclose(pipe);
 
-    std::cout << "Job" << this->GetUniqueID() << " Has Been Executed" << std::endl;
+    std::cout << "Job " << this->GetUniqueID() << " Has Been Executed" << std::endl;
 }
 
 void CompileJob::JobCompleteCallback()

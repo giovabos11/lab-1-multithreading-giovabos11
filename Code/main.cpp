@@ -40,7 +40,7 @@ int main()
         js->QueueJob(*it);
     }
 
-    int running = 1;
+    bool running = true;
 
     while (running)
     {
@@ -50,7 +50,7 @@ int main()
 
         if (command == "stop")
         {
-            running = 0;
+            running = false;
         }
         else if (command == "destroy")
         {
@@ -61,10 +61,10 @@ int main()
         }
         else if (command == "finish")
         {
-            std::cout << "Finishing Jobs" << js->totalJobs << std::endl;
+            std::cout << "Finishing Jobs (" << js->totalJobs << ")" << std::endl;
             js->FinishCompletedJobs();
         }
-        else if (command == "finishjob")
+        else if (command == "finishjob0")
         {
             std::cout << "Finishing Job 0" << std::endl;
             js->FinishJob(0);

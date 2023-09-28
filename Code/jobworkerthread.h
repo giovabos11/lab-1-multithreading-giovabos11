@@ -1,4 +1,6 @@
-#pragma once
+#ifndef JOB_SYSTEM_JOBWORKERTHREAD_H
+#define JOB_SYSTEM_JOBWORKERTHREAD_H
+
 #include <mutex>
 #include <map>
 #include <deque>
@@ -31,8 +33,5 @@ private:
     std::thread *m_thread = nullptr;
     mutable std::mutex m_workerStatusMutex;
 };
-
-#ifndef JOB_SYSTEM_JOBWORKERTHREAD_H /// ???
-#define JOB_SYSTEM_JOBWORKERTHREAD_H
 
 #endif // JOB_SYSTEM_JOBWORKERTHREAD_H

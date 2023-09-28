@@ -1,4 +1,6 @@
-#pragma once
+#ifndef JOB_SYSTEM_JOB_H
+#define JOB_SYSTEM_JOB_H
+
 #include <mutex>
 #include <map>
 #include <deque>
@@ -28,3 +30,5 @@ private:
     int m_jobType = -1;
     unsigned long m_jobChannels = 0xFFFFFFFF;
 };
+
+#endif
