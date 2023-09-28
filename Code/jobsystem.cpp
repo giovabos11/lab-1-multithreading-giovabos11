@@ -99,7 +99,7 @@ JobStatus JobSystem::GetJobStatus(int jobID) const
     m_jobHistoryMutex.lock();
 
     JobStatus jobStatus = JOB_STATUS_NEVER_SEEN;
-    if (jobID, (int)m_jobHistory.size())
+    if (jobID < m_jobHistory.size())
     {
         jobStatus = (JobStatus)m_jobHistory[jobID].m_jobStatus;
     }
