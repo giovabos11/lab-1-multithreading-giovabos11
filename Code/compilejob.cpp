@@ -6,7 +6,7 @@
 void CompileJob::Execute()
 {
     std::array<char, 128> buffer;
-    std::string command = "make project_1";
+    std::string command = "MinGW32-make project1"; // This should be "make project1"
 
     // Redirect cerr to cout
     command.append(" 2>&1");
