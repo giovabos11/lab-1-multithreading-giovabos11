@@ -1,12 +1,11 @@
 #include "compilejob.h"
 #include <iostream>
-#include <string>
 #include <array>
 
 void CompileJob::Execute()
 {
     std::array<char, 128> buffer;
-    std::string command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // This should be "make -s -C Code project1"
+    std::string command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // THIS SHOULD BE "make -s -C Code project1"
 
     // Redirect cerr to cout
     command.append(" 2>&1");
@@ -46,7 +45,101 @@ void CompileJob::Execute()
 
 void CompileJob::JobCompleteCallback()
 {
-    std::cout << "Compile Job " << this->GetUniqueID() << " Return Code" << this->returnCode << std::endl;
-    std::cout << "Compile Job " << this->GetUniqueID() << " Output: \n"
-              << this->output << std::endl;
+    // Split the different errors in separete json objects to parse
+    int startIndex = 0, endIndex = 0;
+    std::string temp;
+    for (int i = 0; i <= this->output.size(); i++)
+    {
+        if (this->output[i] == '\n' || i == this->output.size())
+        {
+            endIndex = i;
+            temp = "";
+            temp.append(this->output, startIndex, endIndex - startIndex);
+            generateJson(temp);
+            startIndex = endIndex + 1;
+        }
+    }
+    // std::cout << "Compile Job " << this->GetUniqueID() << " Return Code" << this->returnCode << std::endl;
+    // std::cout << "Compile Job " << this->GetUniqueID() << " Output: \n"
+    //           << this->output << std::endl;
+
+    // Lock the thread to append to file
+    m_jsonMutex.lock();
+    std::ofstream o("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Data\\output.json"); // THIS SHOULD BE ("../Data/output.json");
+    o << std::setw(4) << outputJson << std::endl;
+    o.close();
+    m_jsonMutex.unlock();
+}
+
+void CompileJob::generateJson(std::string &str)
+{
+    if (str.size() == 0)
+        return;
+
+    // Parse file
+    json data = json::parse(str);
+
+    std::string sourceFilename, kind, message, codeArray[5];
+    int lineNumber, columnNumber;
+
+    // Go through every error/warning
+    for (int i = 0; i < data.size(); i++)
+    {
+        // Get either error or warning
+        kind = data[i]["kind"];
+        // Ignore everithing that is not a warning or error
+        if (kind != "error" && kind != "warning")
+            continue;
+        std::cout << data[i]["kind"] << std::endl;
+
+        // Get message
+        message = data[i]["message"];
+        std::cout << message << std::endl;
+
+        // Get main error/warning source line number (first caret) in the file
+        lineNumber = data[i]["locations"][0]["caret"]["line"];
+        std::cout << lineNumber << std::endl;
+
+        // Get main error/warning source line number (first caret) in the file
+        columnNumber = data[i]["locations"][0]["caret"]["display-column"];
+        std::cout << columnNumber << std::endl;
+
+        // Get file name
+        sourceFilename = data[i]["locations"][0]["caret"]["file"];
+        std::cout << sourceFilename << std::endl;
+
+        // Get 2 lines above and bellow if possible (code snippet)
+        std::ifstream sourceFile("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code\\compilecode\\Project1\\hello_world.cpp"); // (sourceFilename);
+        int currentLineNumber = 1;
+        std::string currrentLine = "";
+        int codeIndex = 0;
+        while (!sourceFile.eof() && !sourceFile.fail())
+        {
+            getline(sourceFile, currrentLine);
+            if (currentLineNumber == lineNumber - 2 ||
+                currentLineNumber == lineNumber - 1 ||
+                currentLineNumber == lineNumber ||
+                currentLineNumber == lineNumber + 1 ||
+                currentLineNumber == lineNumber + 2)
+                codeArray[codeIndex++] = (currrentLine != "") ? currrentLine : " ";
+
+            currentLineNumber++;
+        }
+        sourceFile.close();
+
+        // Adjust number of lines of code
+        json codeJson;
+        for (int i = 0; i < 5; i++)
+        {
+            if (codeArray[i] != "")
+            {
+                codeJson += codeArray[i];
+            }
+        }
+
+        // Lock the thread to update the json object
+        m_jsonMutex.lock();
+        outputJson[sourceFilename] += {{"file", sourceFilename}, {kind, message}, {"line", lineNumber}, {"column", columnNumber}, {"code", codeJson}};
+        m_jsonMutex.unlock();
+    }
 }

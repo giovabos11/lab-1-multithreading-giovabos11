@@ -1,0 +1,84 @@
+{
+    "./compilecode/Project1/Dog.cpp": [
+        {
+            "code": [
+                "    float *ptr1, val = 3.14;",
+                "    char *ptr2;",
+                "    ptr1 = &val;",
+                "    ptr2 = &val;",
+                " "
+            ],
+            "column": 1,
+            "error": "expected ',' or ';' before '}' token",
+            "file": "./compilecode/Project1/Dog.cpp",
+            "line": 8
+        }
+    ],
+    "./compilecode/Project1/Dog.h": [
+        {
+            "code": [
+                "#include <iostream>",
+                " ",
+                "int main()",
+                "{",
+                "    float *ptr1, val = 3.14;"
+            ],
+            "column": 1,
+            "error": "new types may not be defined in a return type",
+            "file": "./compilecode/Project1/Dog.h",
+            "line": 4
+        },
+        {
+            "code": [
+                "#include <iostream>",
+                " ",
+                "int main()",
+                "{",
+                "    float *ptr1, val = 3.14;"
+            ],
+            "column": 1,
+            "error": "return type specification for constructor invalid",
+            "file": "./compilecode/Project1/Dog.h",
+            "line": 4
+        }
+    ],
+    "./compilecode/Project1/hello_world.cpp": [
+        {
+            "code": [
+                "#pragma once",
+                "#include <iostream>",
+                " "
+            ],
+            "column": 9,
+            "file": "./compilecode/Project1/hello_world.cpp",
+            "line": 1,
+            "warning": "#pragma once in main file"
+        },
+        {
+            "code": [
+                "    char *ptr2;",
+                "    ptr1 = &val;",
+                "    ptr2 = &val;",
+                " ",
+                "    std::cout << \"Hello World!!!\" << std::endl"
+            ],
+            "column": 12,
+            "error": "cannot convert 'float*' to 'char*' in assignment",
+            "file": "./compilecode/Project1/hello_world.cpp",
+            "line": 9
+        },
+        {
+            "code": [
+                "    ptr2 = &val;",
+                " ",
+                "    std::cout << \"Hello World!!!\" << std::endl",
+                "    return 0;",
+                "}"
+            ],
+            "column": 47,
+            "error": "expected ';' before 'return'",
+            "file": "./compilecode/Project1/hello_world.cpp",
+            "line": 11
+        }
+    ]
+}
