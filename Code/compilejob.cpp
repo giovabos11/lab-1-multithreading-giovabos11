@@ -12,7 +12,13 @@ void CompileJob::Execute()
     command.append(" 2>&1");
 
     // Open pile and run command
+#ifdef __linux__
+    FILE *pipe = popen(command.c_str(), "r");
+#elif _WIN32
     FILE *pipe = _popen(command.c_str(), "r");
+#else
+    FILE *pipe = popen(command.c_str(), "r");
+#endif
 
     if (!pipe)
     {
@@ -27,7 +33,13 @@ void CompileJob::Execute()
     }
 
     // Close pipe and get the return code
+#ifdef __linux__
+    this->returnCode = pclose(pipe);
+#elif _WIN32
     this->returnCode = _pclose(pipe);
+#else
+    this->returnCode = pclose(pipe);
+#endif
 
     std::cout << "Job " << this->GetUniqueID() << " Has Been Executed" << std::endl;
 }
