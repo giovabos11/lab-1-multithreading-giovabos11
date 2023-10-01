@@ -5,8 +5,8 @@
 void CompileJob::Execute()
 {
     std::array<char, 128> buffer;
-    std::string command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // THIS SHOULD BE "make -s -C Code project1"
-
+    // std::string command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // THIS SHOULD BE "make -s -C Code project1"
+    std::string command = "MinGW32-make -s -C \"C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Code\" project1";
     // Redirect cerr to cout
     command.append(" 2>&1");
 
@@ -59,21 +59,20 @@ void CompileJob::JobCompleteCallback()
             startIndex = endIndex + 1;
         }
     }
-    // std::cout << "Compile Job " << this->GetUniqueID() << " Return Code" << this->returnCode << std::endl;
-    // std::cout << "Compile Job " << this->GetUniqueID() << " Output: \n"
-    //           << this->output << std::endl;
+    std::cout << "Compile Job " << this->GetUniqueID() << " Return Code" << this->returnCode << std::endl;
+    std::cout << "Compile Job " << this->GetUniqueID() << " Output: \n"
+              << this->output << std::endl;
 
-    // Lock the thread to append to file
-    m_jsonMutex.lock();
-    std::ofstream o("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Data\\output.json"); // THIS SHOULD BE ("../Data/output.json");
+    // Write to file
+    // std::ofstream o("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Data\\output.json"); // THIS SHOULD BE ("../Data/output.json");
+    std::ofstream o("C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Data\\output.json");
     o << std::setw(4) << outputJson << std::endl;
     o.close();
-    m_jsonMutex.unlock();
 }
 
 void CompileJob::generateJson(std::string &str)
 {
-    if (str.size() == 0)
+    if (str.size() == 0 || str == "[]")
         return;
 
     // Parse file
@@ -90,7 +89,7 @@ void CompileJob::generateJson(std::string &str)
         // Ignore everithing that is not a warning or error
         if (kind != "error" && kind != "warning")
             continue;
-        std::cout << data[i]["kind"] << std::endl;
+        // std::cout << data[i]["kind"] << std::endl;
 
         // Get message
         message = data[i]["message"];
@@ -109,7 +108,8 @@ void CompileJob::generateJson(std::string &str)
         std::cout << sourceFilename << std::endl;
 
         // Get 2 lines above and bellow if possible (code snippet)
-        std::ifstream sourceFile("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code\\compilecode\\Project1\\hello_world.cpp"); // (sourceFilename);
+        // std::ifstream sourceFile("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code\\compilecode\\Project1\\hello_world.cpp"); // (sourceFilename);
+        std::ifstream sourceFile("C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Code\\compilecode\\Project1\\hello_world.cpp");
         int currentLineNumber = 1;
         std::string currrentLine = "";
         int codeIndex = 0;
@@ -137,9 +137,7 @@ void CompileJob::generateJson(std::string &str)
             }
         }
 
-        // Lock the thread to update the json object
-        m_jsonMutex.lock();
+        // Build json object
         outputJson[sourceFilename] += {{"file", sourceFilename}, {kind, message}, {"line", lineNumber}, {"column", columnNumber}, {"code", codeJson}};
-        m_jsonMutex.unlock();
     }
 }

@@ -25,7 +25,6 @@ public:
 
 private:
     json outputJson;
-    mutable std::mutex m_jsonMutex;
 };
 
 #endif // JOB_SYSTEM_COMPILEJOB_H
