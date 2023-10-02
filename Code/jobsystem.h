@@ -4,6 +4,7 @@
 #include <vector>
 #include <mutex>
 #include <deque>
+#include <fstream>
 
 constexpr int JOB_TYPE_ANY = -1;
 
@@ -50,6 +51,7 @@ public:
     JobStatus GetJobStatus(int jobID) const;
     bool IsJobComplete(int jobID) const;
     bool areJobsRunning() { return m_jobsRunning.size() != 0; }
+    bool areJobsCompleted() { return m_jobsCompleted.size() != 0; }
 
     void FinishJob(int jobID);
     void FinishCompletedJobs();

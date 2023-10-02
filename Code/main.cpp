@@ -50,7 +50,7 @@ int main()
     }
 
     // Finish all jobs
-    while (js->areJobsRunning())
+    while (js->areJobsRunning() || js->areJobsCompleted())
     {
         js->FinishCompletedJobs();
     }

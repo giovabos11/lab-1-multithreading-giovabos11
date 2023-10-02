@@ -10,6 +10,11 @@ typedef void (*JobCallback)(Job *completedJob);
 JobSystem::JobSystem()
 {
     m_jobHistory.reserve(256 * 1024);
+
+    // Reset job history file
+    std::ofstream o("../Data/job_history.txt");
+    o << "";
+    o.close();
 }
 
 JobSystem::~JobSystem()
@@ -88,6 +93,10 @@ void JobSystem::QueueJob(Job *job)
 
     m_jobHistoryMutex.lock();
     m_jobHistory.emplace_back(JobHistoryEntry(job->m_jobType, JOB_STATUS_QUEUED));
+    // Write to job history file
+    std::ofstream o("../Data/job_history.txt", std::ios_base::app);
+    o << "Job ID " << job->GetUniqueID() << " was queued" << std::endl;
+    o.close();
     m_jobHistoryMutex.unlock();
 
     m_jobsQueued.push_back(job);
@@ -126,6 +135,10 @@ void JobSystem::FinishCompletedJobs()
     {
         job->JobCompleteCallback();
         m_jobHistoryMutex.lock();
+        // Write to job history file
+        std::ofstream o("../Data/job_history.txt", std::ios_base::app);
+        o << "Job ID " << job->GetUniqueID() << " was retired" << std::endl;
+        o.close();
         m_jobHistory[job->m_jobID].m_jobStatus = JOB_STATUS_RETIRED;
         m_jobHistoryMutex.unlock();
         delete job;
@@ -187,6 +200,10 @@ void JobSystem::OnJobCompleted(Job *jobJustExecuted)
             m_jobsRunning.erase(runningJobItr);
             m_jobsCompleted.push_back(jobJustExecuted);
             m_jobHistory[jobJustExecuted->m_jobID].m_jobStatus = JOB_STATUS_COMPLETED;
+            // Write to job history file
+            std::ofstream o("../Data/job_history.txt", std::ios_base::app);
+            o << "Job ID " << jobJustExecuted->GetUniqueID() << " was completed" << std::endl;
+            o.close();
             m_jobHistoryMutex.unlock();
             break;
         }
