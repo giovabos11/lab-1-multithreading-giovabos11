@@ -30,6 +30,7 @@ int main()
     for (int i = 0; i < commands.size(); i++)
     {
         CompileJob *cjb = new CompileJob(0xFFFFFFFF, i, commands[i]);
+        // cjb->command = commands[i];
         jobs.push_back(cjb);
     }
 

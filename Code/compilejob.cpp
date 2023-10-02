@@ -42,10 +42,13 @@ void CompileJob::Execute()
     this->returnCode = pclose(pipe);
 #endif
 
+    // Parse JSON output
+    parseFile();
+
     std::cout << "Job " << this->GetUniqueID() << " Has Been Executed" << std::endl;
 }
 
-void CompileJob::JobCompleteCallback()
+void CompileJob::parseFile()
 {
     // Split the different errors in separete json objects to parse
     int startIndex = 0, endIndex = 0;
@@ -123,7 +126,7 @@ void CompileJob::generateJson(std::string &str)
         // Get 2 lines above and bellow if possible (code snippet)
         std::ifstream sourceFile(sourceFilename);
         int currentLineNumber = 1;
-        std::string currrentLine = "", codeArray[5];
+        std::string currrentLine = "", snippet = ""; // MAKE ONE LINER
         int codeIndex = 0;
         while (!sourceFile.eof() && !sourceFile.fail())
         {
@@ -133,23 +136,18 @@ void CompileJob::generateJson(std::string &str)
                 currentLineNumber == lineNumber ||
                 currentLineNumber == lineNumber + 1 ||
                 currentLineNumber == lineNumber + 2)
-                codeArray[codeIndex++] = (currrentLine != "") ? currrentLine : " ";
+                snippet += currrentLine + "\n";
 
             currentLineNumber++;
         }
         sourceFile.close();
 
-        // Adjust number of lines of code
-        json codeJson;
-        for (int i = 0; i < 5; i++)
-        {
-            if (codeArray[i] != "")
-            {
-                codeJson += codeArray[i];
-            }
-        }
-
         // Build json object
-        outputJson[sourceFilename] += {{"file", sourceFilename}, {kind, message}, {"line", lineNumber}, {"column", columnNumber}, {"code", codeJson}};
+        outputJson[sourceFilename] += {{"file", sourceFilename}, {kind, message}, {"line", lineNumber}, {"column", columnNumber}, {"code", snippet}};
     }
+}
+
+void CompileJob::JobCompleteCallback()
+{
+    std::cout << "Job " << this->GetUniqueID() << " retired" << std::endl;
 }

@@ -19,6 +19,7 @@ public:
     int returnCode;
 
     void Execute();
+    void parseFile();
     void JobCompleteCallback();
 
     void generateJson(std::string &);
