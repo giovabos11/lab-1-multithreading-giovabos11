@@ -5,11 +5,9 @@
 void CompileJob::Execute()
 {
     std::array<char, 128> buffer;
-    // command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // THIS SHOULD BE "make -s -C Code project1"
-    command = "MinGW32-make -s -C \"C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Code\" project1";
 
     // Get project name
-    projectName = command.substr(command.find_last_of(' '), command.length());
+    projectName = command.substr(command.find_last_of(' ') + 1, command.length());
 
     // Redirect cerr to cout
     command.append(" 2>&1");
@@ -69,8 +67,7 @@ void CompileJob::JobCompleteCallback()
               << this->output << std::endl;
 
     // Write to file
-    // std::ofstream o("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Data\\output.json"); // THIS SHOULD BE ("../Data/output_" + projectName + ".json");
-    std::ofstream o("C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Data\\output_" + projectName + ".json");
+    std::ofstream o("../Data/output_" + projectName + ".json");
     o << std::setw(4) << outputJson << std::endl;
     o.close();
 }
@@ -93,7 +90,7 @@ void CompileJob::generateJson(std::string &str)
         return;
     }
 
-    std::string sourceFilename, kind, message, codeArray[5];
+    std::string sourceFilename, kind, message;
     int lineNumber, columnNumber;
 
     // Go through every error/warning
@@ -102,31 +99,30 @@ void CompileJob::generateJson(std::string &str)
         // Get either error or warning
         kind = data[i]["kind"];
         // Ignore everithing that is not a warning or error
-        if (kind != "error" && kind != "warning")
+        if (kind != "error" && kind != "warning" && kind != "note")
             continue;
         // std::cout << data[i]["kind"] << std::endl;
 
         // Get message
         message = data[i]["message"];
-        std::cout << message << std::endl;
+        // std::cout << message << std::endl;
 
         // Get main error/warning source line number (first caret) in the file
         lineNumber = data[i]["locations"][0]["caret"]["line"];
-        std::cout << lineNumber << std::endl;
+        // std::cout << lineNumber << std::endl;
 
         // Get main error/warning source line number (first caret) in the file
         columnNumber = data[i]["locations"][0]["caret"]["display-column"];
-        std::cout << columnNumber << std::endl;
+        // std::cout << columnNumber << std::endl;
 
         // Get file name
         sourceFilename = data[i]["locations"][0]["caret"]["file"];
-        std::cout << sourceFilename << std::endl;
+        // std::cout << sourceFilename << std::endl;
 
         // Get 2 lines above and bellow if possible (code snippet)
-        // std::ifstream sourceFile("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code\\compilecode\\Project1\\hello_world.cpp"); // (sourceFilename);
-        std::ifstream sourceFile("C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Code\\compilecode\\Project1\\hello_world.cpp");
+        std::ifstream sourceFile(sourceFilename);
         int currentLineNumber = 1;
-        std::string currrentLine = "";
+        std::string currrentLine = "", codeArray[5];
         int codeIndex = 0;
         while (!sourceFile.eof() && !sourceFile.fail())
         {

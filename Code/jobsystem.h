@@ -49,6 +49,7 @@ public:
     // Status queries
     JobStatus GetJobStatus(int jobID) const;
     bool IsJobComplete(int jobID) const;
+    bool areJobsRunning() { return m_jobsRunning.size() != 0; }
 
     void FinishJob(int jobID);
     void FinishCompletedJobs();

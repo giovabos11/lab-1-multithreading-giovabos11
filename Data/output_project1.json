@@ -2,11 +2,9 @@
     "./compilecode/Project1/Dog.cpp": [
         {
             "code": [
-                "    float *ptr1, val = 3.14;",
-                "    char *ptr2;",
-                "    ptr1 = &val;",
-                "    ptr2 = &val;",
-                " "
+                "{",
+                "    int woof = 1",
+                "}"
             ],
             "column": 1,
             "error": "expected ',' or ';' before '}' token",
@@ -19,9 +17,9 @@
             "code": [
                 "#include <iostream>",
                 " ",
-                "int main()",
+                "class Dog",
                 "{",
-                "    float *ptr1, val = 3.14;"
+                "public:"
             ],
             "column": 1,
             "error": "new types may not be defined in a return type",
@@ -32,9 +30,22 @@
             "code": [
                 "#include <iostream>",
                 " ",
-                "int main()",
+                "class Dog",
                 "{",
-                "    float *ptr1, val = 3.14;"
+                "public:"
+            ],
+            "column": 1,
+            "file": "./compilecode/Project1/Dog.h",
+            "line": 4,
+            "note": "(perhaps a semicolon is missing after the definition of 'Dog')"
+        },
+        {
+            "code": [
+                "#include <iostream>",
+                " ",
+                "class Dog",
+                "{",
+                "public:"
             ],
             "column": 1,
             "error": "return type specification for constructor invalid",
