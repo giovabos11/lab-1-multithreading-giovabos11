@@ -5,8 +5,8 @@
 void CompileJob::Execute()
 {
     std::array<char, 128> buffer;
-    // std::string command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // THIS SHOULD BE "make -s -C Code project1"
-    std::string command = "MinGW32-make -s -C \"C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Code\" project1";
+    // command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // THIS SHOULD BE "make -s -C Code project1"
+    command = "MinGW32-make -s -C \"C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Code\" project1";
     // Redirect cerr to cout
     command.append(" 2>&1");
 
@@ -59,6 +59,7 @@ void CompileJob::JobCompleteCallback()
             startIndex = endIndex + 1;
         }
     }
+
     std::cout << "Compile Job " << this->GetUniqueID() << " Return Code" << this->returnCode << std::endl;
     std::cout << "Compile Job " << this->GetUniqueID() << " Output: \n"
               << this->output << std::endl;
@@ -72,11 +73,21 @@ void CompileJob::JobCompleteCallback()
 
 void CompileJob::generateJson(std::string &str)
 {
+    // If no errors or the string is empty, exit
     if (str.size() == 0 || str == "[]")
         return;
 
     // Parse file
-    json data = json::parse(str);
+    json data;
+    try
+    {
+        data = json::parse(str);
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << "Error parsing the console output: Invalid json format";
+        return;
+    }
 
     std::string sourceFilename, kind, message, codeArray[5];
     int lineNumber, columnNumber;

@@ -8,80 +8,51 @@ using namespace std;
 
 int main()
 {
-    cout << "Hello, World!" << endl;
-
+    // Create job system object
     JobSystem *js = JobSystem::CreateOrGet();
 
+    // Create a vector with different commands
+    vector<std::string> commands = {"make -s -C Code project1",
+                                    "make -s -C Code project2",
+                                    "make -s -C Code project3",
+                                    "make -s -C Code project4"};
+
+    // Create the maximum thread amount supported by the system
     cout << "Creating Worker Threads" << endl;
+    for (int i = 0; i < thread::hardware_concurrency() - 1; i++)
+    {
+        js->CreateWorkerThread(("Thread" + std::to_string(i)).c_str(), 0xFFFFFFFF);
+    }
 
-    js->CreateWorkerThread("Thread1", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread2", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread3", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread4", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread5", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread6", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread7", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread8", 0xFFFFFFFF);
-    js->CreateWorkerThread("Thread9", 0xFFFFFFFF);
-
+    // Create a different job for each make command (makefile needed)
     cout << "Create Jobs" << endl;
+    vector<Job *> jobs;
+    for (int i = 0; i < commands.size(); i++)
+    {
+        CompileJob *cjb = new CompileJob(0xFFFFFFFF, i, commands[i]);
+        jobs.push_back(cjb);
+    }
 
-    std::vector<Job *> jobs;
-
-    CompileJob *cjb = new CompileJob(0xFFFFFFFF, 1);
-    jobs.push_back(cjb);
-
+    // Queue the jobs
     cout << "Queuing Jobs" << endl;
-
     vector<Job *>::iterator it = jobs.begin();
-
     for (; it != jobs.end(); it++)
     {
         js->QueueJob(*it);
     }
 
-    bool running = true;
+    // Finish all jobs
+    js->FinishCompletedJobs();
 
-    while (running)
+    // Check all job statuses
+    std::cout << "Job Status" << std::endl;
+    for (int i = 0; i < jobs.size(); i++)
     {
-        string command;
-        cout << "Enter stop, destroy, finish, or status: " << endl;
-        cin >> command;
-
-        if (command == "stop")
-        {
-            running = false;
-        }
-        else if (command == "destroy")
-        {
-            cout << "Destroying Job System" << endl;
-            js->FinishCompletedJobs();
-            js->Destroy();
-            running = 0;
-        }
-        else if (command == "finish")
-        {
-            std::cout << "Finishing Jobs (" << js->totalJobs << ")" << std::endl;
-            js->FinishCompletedJobs();
-        }
-        else if (command == "finishjob0")
-        {
-            std::cout << "Finishing Job 0" << std::endl;
-            js->FinishJob(0);
-        }
-        else if (command == "status")
-        {
-            std::cout << "Job Status" << std::endl;
-            for (int i = 0; i < jobs.size(); i++)
-            {
-                std::cout << "Job " << i << " Status: " << (int)js->GetJobStatus(i) << std::endl;
-            }
-        }
-        else
-        {
-            cout << "Invalid Command" << endl;
-        }
+        std::cout << "Job " << i << " Status: " << (int)js->GetJobStatus(i) << std::endl;
     }
+
+    // Destroy Job System
+    js->Destroy();
 
     return 0;
 }
