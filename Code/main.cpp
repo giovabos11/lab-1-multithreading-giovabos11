@@ -13,9 +13,9 @@ int main()
 
     // Create a vector with different commands
     vector<std::string> commands = {"MinGW32-make project1",
-                                    "MinGW32-make project1",
-                                    "MinGW32-make project1",
-                                    "MinGW32-make project1"}; // THIS SHOULD BE "make project1"
+                                    "MinGW32-make project2",
+                                    "MinGW32-make project3",
+                                    "MinGW32-make project4"}; // THIS SHOULD BE "make project1"
 
     // Create the maximum thread amount supported by the system
     cout << "Creating Worker Threads..." << endl;
