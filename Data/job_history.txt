@@ -2,10 +2,14 @@ Job ID 0 was queued
 Job ID 1 was queued
 Job ID 2 was queued
 Job ID 3 was queued
-Job ID 3 was completed
-Job ID 3 was retired
+Job ID 0 was claimed
+Job ID 1 was claimed
+Job ID 2 was claimed
+Job ID 3 was claimed
 Job ID 2 was completed
 Job ID 2 was retired
+Job ID 3 was completed
+Job ID 3 was retired
 Job ID 0 was completed
 Job ID 0 was retired
 Job ID 1 was completed

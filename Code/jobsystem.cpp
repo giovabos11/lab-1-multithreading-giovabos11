@@ -228,6 +228,10 @@ Job *JobSystem::ClaimAJob(unsigned long channels)
             claimedJob = queuedJob;
 
             m_jobHistoryMutex.lock();
+            // Write to job history file
+            std::ofstream o("../Data/job_history.txt", std::ios_base::app);
+            o << "Job ID " << claimedJob->GetUniqueID() << " was claimed" << std::endl;
+            o.close();
             m_jobsQueued.erase(queuedJobIter);
             m_jobsRunning.push_back(claimedJob);
             m_jobHistory[claimedJob->m_jobID].m_jobStatus = JOB_STATUS_RUNNING;
