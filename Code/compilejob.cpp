@@ -62,8 +62,8 @@ void CompileJob::JobCompleteCallback()
         }
     }
 
-    std::cout << "Compile Job " << this->GetUniqueID() << " Return Code" << this->returnCode << std::endl;
-    std::cout << "Compile Job " << this->GetUniqueID() << " Output: \n"
+    std::cout << "Compile Job - " << this->GetUniqueID() << "Return Code: " << this->returnCode << std::endl;
+    std::cout << "Compile Job - " << this->GetUniqueID() << "Output: \n"
               << this->output << std::endl;
 
     // Write to file
