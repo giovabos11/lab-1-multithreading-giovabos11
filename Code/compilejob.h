@@ -10,8 +10,8 @@ using json = nlohmann::json;
 class CompileJob : public Job
 {
 public:
-    CompileJob(unsigned long jobChannels, int jobType, std::string cmd)
-        : Job(jobChannels, jobType), command(cmd){};
+    CompileJob(unsigned long jobChannels, int jobType)
+        : Job(jobChannels, jobType){};
 
     ~CompileJob(){};
 
@@ -24,9 +24,10 @@ public:
 
     void generateJson(std::string &);
 
+    std::string command;
+
 private:
     json outputJson;
-    std::string command;
     std::string projectName;
 };
 
