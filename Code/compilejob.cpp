@@ -7,6 +7,10 @@ void CompileJob::Execute()
     std::array<char, 128> buffer;
     // command = "MinGW32-make -s -C C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Code project1"; // THIS SHOULD BE "make -s -C Code project1"
     command = "MinGW32-make -s -C \"C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Code\" project1";
+
+    // Get project name
+    projectName = command.substr(command.find_last_of(' '), command.length());
+
     // Redirect cerr to cout
     command.append(" 2>&1");
 
@@ -65,8 +69,8 @@ void CompileJob::JobCompleteCallback()
               << this->output << std::endl;
 
     // Write to file
-    // std::ofstream o("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Data\\output.json"); // THIS SHOULD BE ("../Data/output.json");
-    std::ofstream o("C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Data\\output.json");
+    // std::ofstream o("C:\\Users\\giova_pwwkjqa\\OneDrive\\Escritorio\\SMU\\lab-1-multithreading-giovabos11\\Data\\output.json"); // THIS SHOULD BE ("../Data/output_" + projectName + ".json");
+    std::ofstream o("C:\\Users\\giova\\Desktop\\School\\1SMU\\1FALL 23\\Modern Computing Design\\lab-1-multithreading-giovabos11\\Data\\output_" + projectName + ".json");
     o << std::setw(4) << outputJson << std::endl;
     o.close();
 }

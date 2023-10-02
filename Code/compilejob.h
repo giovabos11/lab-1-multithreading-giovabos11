@@ -26,6 +26,7 @@ public:
 private:
     json outputJson;
     std::string command;
+    std::string projectName;
 };
 
 #endif // JOB_SYSTEM_COMPILEJOB_H
