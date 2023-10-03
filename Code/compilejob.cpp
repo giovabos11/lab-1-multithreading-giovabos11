@@ -90,7 +90,7 @@ void CompileJob::generateJson(std::string &str)
     }
     catch (const std::exception &e)
     {
-        std::cout << "Error parsing the console output: Invalid json format";
+        std::cout << "Error parsing the console output: Invalid json format" << std::endl;
         return;
     }
 
