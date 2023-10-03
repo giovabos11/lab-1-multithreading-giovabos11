@@ -12,10 +12,18 @@ int main()
     JobSystem *js = JobSystem::CreateOrGet();
 
     // Create a vector with different commands
-    vector<std::string> commands = {"MinGW32-make project1",
-                                    "MinGW32-make project2",
-                                    "MinGW32-make project3",
-                                    "MinGW32-make project4"}; // THIS SHOULD BE "make project1"
+    string make = "";
+#ifdef __linux__
+    make = "make";
+#elif _WIN32
+    make = "MinGW32-make";
+#else
+    make = "make";
+#endif
+    vector<string> commands = {make + " project1",
+                               make + " project2",
+                               make + " project3",
+                               make + " project4"};
 
     // Create the maximum thread amount supported by the system
     cout << "Creating Worker Threads..." << endl;
